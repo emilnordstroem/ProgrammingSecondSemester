@@ -1,12 +1,14 @@
 package opgave02;
 
+import java.util.ArrayList;
+
 public class App {
     public static void main(String[] args) {
         // Filling customers with objects
         Customer[] customers = constructCustomers();
 
         // Sorting after overridden compareTo() method in Customer class
-        customers = insertionAlgorithm(customers);
+        insertionAlgorithm(customers);
         for(Customer customer : customers){
             System.out.println(customer.toString());
         }
@@ -17,25 +19,27 @@ public class App {
         System.out.printf("==================================%nAfter customer%n");
         Customer pointCustomer = customers[25];
         System.out.println(pointCustomer.toString());
-        customers = afterCustomer(customers, pointCustomer);
+        customers = afterCustomerAlternative(customers, pointCustomer);
         for(Customer customer : customers){
             System.out.println(customer.toString());
         }
     }
 
+
     public static Customer lastCustomer(Customer[] customers){
         int length = customers.length;
         return customers[length - 1];
     }
-
+    //===============================================================================
+    // Original answer
     public static Customer[] afterCustomer(Customer[] customers, Customer customer) {
         int customerAtIndex = binarySearchAlgorithm(customers, customer);
-        if (customerAtIndex != -1 && customerAtIndex < customers.length - 1) {
-            Customer[] customersAfter = new Customer[customers.length - customerAtIndex - 1];
-            System.arraycopy(customers, customerAtIndex + 1, customersAfter, 0, customersAfter.length);
-            return customersAfter;
+        Customer[] customersAfter = new Customer[customers.length - customerAtIndex];
+        for(int index = 0; index < customersAfter.length; index++){
+            customersAfter[index] = customers[customerAtIndex];
+            customerAtIndex++;
         }
-        return new Customer[0];
+        return customersAfter;
     }
 
     private static int binarySearchAlgorithm(Customer[] customers, Customer customer) {
@@ -58,21 +62,32 @@ public class App {
         return -1;
     }
 
-
     private static Customer[] insertionAlgorithm (Customer[] unsortedCustomers) {
-        Customer[] sortedCustomers = unsortedCustomers;
-        for(int index = 1; index < sortedCustomers.length; index++){
-            Customer candidate = sortedCustomers[index];
+        // I manipulate the argument passed directly
+        for(int index = 1; index < unsortedCustomers.length; index++){
+            Customer candidate = unsortedCustomers[index];
             int previousIndex = index - 1;
             while(previousIndex >= 0
-                    && candidate.compareTo(sortedCustomers[previousIndex]) < 0){ // Fix here
-                sortedCustomers[previousIndex + 1] = sortedCustomers[previousIndex];
+                    && candidate.compareTo(unsortedCustomers[previousIndex]) < 0){ // Fix here
+                unsortedCustomers[previousIndex + 1] = unsortedCustomers[previousIndex];
                 previousIndex -= 1;
             }
-            sortedCustomers[previousIndex + 1] = candidate;
+            unsortedCustomers[previousIndex + 1] = candidate;
         }
-        return sortedCustomers;
+        return unsortedCustomers;
     }
+    //===========================================================================
+    // Alternative version
+    public static Customer[] afterCustomerAlternative(Customer[] customers, Customer customer){
+        ArrayList<Customer> customersAfter = new ArrayList<>();
+        for(Customer currentCustomer : customers){
+            if(customer.compareTo(currentCustomer) > 0){
+                customersAfter.add(currentCustomer);
+            }
+        }
+        return customersAfter.toArray(new Customer[0]);
+    }
+    //============================================================================
 
     private static Customer[] constructCustomers(){
         Customer[] customers = new Customer[50];
