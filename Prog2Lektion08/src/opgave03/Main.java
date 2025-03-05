@@ -16,7 +16,6 @@ public class Main {
         System.out.println("Navne med længde = 5 : " + elementsOfLength(names, 5));
     }
 
-
     /**
      * @param strings ArrayList of elements
      * @param length the length to test for
